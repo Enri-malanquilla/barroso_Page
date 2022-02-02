@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100%;
+  /* manipular pantalla tactil - mirar
+    touch-action: none; */
+}
+
+main {
+  overflow: hidden;
+  background-image: url('/fotos_adri/logo_adri.jpg');
+  background-repeat: no-repeat;
+}
