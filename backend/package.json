@@ -4,12 +4,14 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "initDB": "node ./bdd/initDB.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.15"
   },
   "dependencies": {

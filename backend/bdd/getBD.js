@@ -1,12 +1,12 @@
 require('dotenv').config();
-const mysql = require('mysql2').promise;
+const mysql = require('mysql2/promise');
 
 const { MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE } = process.env;
 let pool;
 const getDB = async () => {
   if (!pool) {
     pool = mysql.createPool({
-      connectionLimit: 40,
+      connectionLimit: 20,
       host: MYSQL_HOST,
       user: MYSQL_USER,
       password: MYSQL_PASSWORD,
