@@ -1,4 +1,17 @@
 const getDB = require('./getBD');
+require('dotenv').config();
+//dar formato a fecha
+const { format } = require('date-fns');
+function formatDate(date) {
+  return format(date, 'yyyy-MM-dd-HH-mm-ss');
+}
+const {
+  NOMBRE_USUARIO,
+  EMAIL_USUARIO,
+  CONTRASENA_USUARIO,
+  SECURITY_QUESTION,
+  KEY_WORD,
+} = process.env;
 
 async function initDB() {
   let connection;
@@ -19,7 +32,7 @@ async function initDB() {
         name VARCHAR(50) NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(512) NOT NULL,
-        active BOOLEAN DEFAULT false,
+        active BOOLEAN DEFAULT true,
         deleted BOOLEAN DEFAULT false,
         role ENUM('admin', 'user_dev', 'user_social', 'user_fan' ) DEFAULT 'user_fan' NOT NULL,
         access ENUM('dev', 'social', 'user') DEFAULT 'user' NOT NULL,
@@ -56,7 +69,8 @@ async function initDB() {
             applemusic VARCHAR(100),
             itunes VARCHAR(100),
             titulo VARCHAR(50) NOT NULL,
-            song_type ENUM("propia", "cover", "colaboracion", "propia-colaboracion") NOT NULL,
+            song_type ENUM("propia", "cover", "colaboracion", "propia-colaboracion")
+            DEFAULT "propia" NOT NULL,
             created_song DATETIME NOT NULL,
             id_singer INT NOT NULL,
             FOREIGN KEY (id_singer) REFERENCES 
@@ -110,6 +124,24 @@ async function initDB() {
     console.log('PHOTOS TABLES CREATED');
 
     console.log('CREATED TABLES READY');
+
+    //usuario admin
+    await connection.query(`
+    INSERT INTO user_dev (name, email, password,
+     role, access, security_question, key_word, created_user )
+     VALUES (
+       '${NOMBRE_USUARIO}',
+       '${EMAIL_USUARIO}',
+       SHA2('${CONTRASENA_USUARIO}', 512),
+       'admin',
+       'dev',
+       '${SECURITY_QUESTION}',
+       '${KEY_WORD}',
+       '${formatDate(new Date())}'
+     )
+    `);
+
+    console.log('ADMIN CREATED');
   } catch (error) {
     console.error(error.message);
   } finally {
