@@ -108,6 +108,8 @@ async function initDB() {
     `);
 
     console.log('PHOTOS TABLES CREATED');
+
+    console.log('CREATED TABLES READY');
   } catch (error) {
     console.error(error.message);
   } finally {
