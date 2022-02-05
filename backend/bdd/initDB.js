@@ -142,6 +142,18 @@ async function initDB() {
     `);
 
     console.log('ADMIN CREATED');
+    //crear cantante principal
+
+    await connection.query(`
+    INSERT INTO partners_colaboration (
+      name, comercial_name, type_partner, created_partner
+    ) VALUES (
+      "adri barroso",
+      "barroso",
+      "singer",
+      "${formatDate(new Date())}"
+    )
+    `);
   } catch (error) {
     console.error(error.message);
   } finally {
