@@ -11,6 +11,16 @@ const { PORT, HOST } = process.env;
 //endpoints
 app.use(express.json());
 app.use(fileUpload());
+/*
+####################
+######USUARIOS######
+###################
+*/
+//llamada middlewares usuarios
+const { loginUser } = require('./controllers/user/index');
+//endpoint usuarios
+
+app.post('/login', loginUser);
 //errores
 app.use((error, req, res, next) => {
   console.error(error);
