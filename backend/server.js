@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const expressFileUpload = require('express-fileupload');
-
+const morgan = require('morgan');
 //variables librerias
 const app = express();
 const { PORT, HOST } = process.env;

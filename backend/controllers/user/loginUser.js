@@ -15,8 +15,9 @@ const loginUser = async (req, res, next) => {
     //comprobacion de usuario
     const [user] = await connection.query(
       `
-      SELECT id, active, role, name, key_word, active FROM user_dev
-      WHERE email = ? AND password = SHA2(?,512) 
+      SELECT id, active, password, role, name, email FROM user_dev
+      WHERE (email = ? AND password = SHA2(?, 512))
+     
       `,
       [email, password]
     );
@@ -25,15 +26,29 @@ const loginUser = async (req, res, next) => {
       error.httpStatus = 401;
       throw error;
     }
-    if (user.role === 'admin' && !keyword) {
-      const error = new Error('Debes introducir la clave');
-      error.httpStatus = 400;
-      throw error;
-    }
     if (!user[0].active) {
       const error = new Error('Usuario pendiente de validar o inactivo');
       error.httpStatus = 401;
       throw error;
+    }
+    if (user[0].role === 'admin' && !keyword) {
+      const error = new Error('Debes introducir la clave');
+      error.httpStatus = 400;
+      throw error;
+    }
+    if (user[0].role === 'admin') {
+      const [key] = await connection.query(
+        `
+        SELECT name FROM user_dev
+        WHERE key_word = ?
+        `,
+        [keyword]
+      );
+      if (key.length < 1) {
+        const error = new Error('No eres administrador');
+        error.httpStatus = 400;
+        throw error;
+      }
     }
     //creamos token
     const tokenInfo = {

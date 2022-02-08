@@ -11,6 +11,8 @@ const {
   CONTRASENA_USUARIO,
   SECURITY_QUESTION,
   KEY_WORD,
+  USER_DEV,
+  NOMBRE_DEV,
 } = process.env;
 
 async function initDB() {
@@ -142,6 +144,25 @@ async function initDB() {
     `);
 
     console.log('ADMIN CREATED');
+
+    //usuario user_dev
+    await connection.query(`
+    INSERT INTO user_dev (name, email, password,
+     role, access, security_question, key_word, created_user )
+     VALUES (
+       '${NOMBRE_DEV}',
+       '${USER_DEV}',
+       SHA2('${CONTRASENA_USUARIO}', 512),
+       'user_dev',
+       'dev',
+       '${SECURITY_QUESTION}',
+       '${KEY_WORD}',
+       '${formatDate(new Date())}'
+     )
+    `);
+
+    console.log('ADMIN CREATED');
+
     //crear cantante principal
 
     await connection.query(`
