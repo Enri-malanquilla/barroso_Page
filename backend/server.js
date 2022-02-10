@@ -12,15 +12,26 @@ const { PORT, HOST } = process.env;
 app.use(express.json());
 app.use(fileUpload());
 /*
+#######################
+//MIDDLEWARES
+#######################
+*/
+
+const { authUser } = require('./middleware');
+/*
 ####################
 ######USUARIOS######
 ###################
 */
-//llamada middlewares usuarios
-const { loginUser } = require('./controllers/user/index');
-//endpoint usuarios
+//llamada endpoint usuarios
 
+const { loginUser, createUserAdmin } = require('./controllers/user/index');
+
+//endpoint usuarios
+//login usuarios*
 app.post('/login', loginUser);
+//crear usuario por admin
+app.post('/create_u_admin', authUser, createUserAdmin);
 //errores
 app.use((error, req, res, next) => {
   console.error(error);

@@ -39,7 +39,7 @@ async function initDB() {
         role ENUM('admin', 'user_dev', 'user_social', 'user_fan' ) DEFAULT 'user_fan' NOT NULL,
         access ENUM('dev', 'social', 'user') DEFAULT 'user' NOT NULL,
         security_question VARCHAR(100) NOT NULL,
-        key_word VARCHAR(50) NOT NULL,
+        key_word VARCHAR(512) NOT NULL,
         registration_code VARCHAR(100),
         recovered_code VARCHAR(100),
         created_user DATETIME NOT NULL,
@@ -138,7 +138,7 @@ async function initDB() {
        'admin',
        'dev',
        '${SECURITY_QUESTION}',
-       '${KEY_WORD}',
+       SHA2('${KEY_WORD}', 512),
        '${formatDate(new Date())}'
      )
     `);
@@ -156,7 +156,7 @@ async function initDB() {
        'user_dev',
        'dev',
        '${SECURITY_QUESTION}',
-       '${KEY_WORD}',
+       SHA2('${KEY_WORD}', 512),
        '${formatDate(new Date())}'
      )
     `);
