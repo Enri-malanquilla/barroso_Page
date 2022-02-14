@@ -10,6 +10,7 @@ const createUserAdmin = async (req, res, next) => {
   try {
     connection = await getDB();
     const { id, name } = req.userAuth;
+    console.log(id, name);
     const [admin] = await connection.query(
       `
       SELECT role FROM user_dev

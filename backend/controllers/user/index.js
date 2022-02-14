@@ -1,5 +1,6 @@
 //impotar controllers usuario
 const createUserAdmin = require('./createUserAdmin');
+const deleteUserAdmin = require('./deleteUserAdmin');
 const loginUser = require('./loginUser');
 
 //exportar controllers usuario
@@ -7,4 +8,5 @@ const loginUser = require('./loginUser');
 module.exports = {
   loginUser,
   createUserAdmin,
+  deleteUserAdmin,
 };

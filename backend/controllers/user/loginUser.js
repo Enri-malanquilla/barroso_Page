@@ -1,5 +1,8 @@
 const getBD = require('../../bdd/getBD');
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto-js');
+const { CRYPTO_PHRASE } = process.env;
 
 const loginUser = async (req, res, next) => {
   let connection;
@@ -31,6 +34,12 @@ const loginUser = async (req, res, next) => {
       error.httpStatus = 401;
       throw error;
     }
+    if (user[0].deleted) {
+      const error = new Error('Usuario eliminado, preguntar a admin');
+      error.httpStatus = 401;
+      throw error;
+    }
+
     if (user[0].role === 'admin' && !keyword) {
       const error = new Error('Debes introducir la clave');
       error.httpStatus = 400;
@@ -40,7 +49,7 @@ const loginUser = async (req, res, next) => {
       const [key] = await connection.query(
         `
         SELECT name FROM user_dev
-        WHERE key_word = ?
+        WHERE key_word = SHA2(?, 512)
         `,
         [keyword]
       );
@@ -50,10 +59,20 @@ const loginUser = async (req, res, next) => {
         throw error;
       }
     }
+    //encriptamos info de token
+    const userCrypto = crypto.AES.encrypt(
+      `${user[0].name}`,
+      CRYPTO_PHRASE
+    ).toString();
+    const nameCrypto = crypto.AES.encrypt(
+      `${user[0].id}`,
+      CRYPTO_PHRASE
+    ).toString();
+
     //creamos token
     const tokenInfo = {
-      name: user[0].name,
-      id: user[0].id,
+      name: userCrypto,
+      id: nameCrypto,
     };
     const token = jwt.sign(tokenInfo, process.env.SECRET, {
       expiresIn: '30d',

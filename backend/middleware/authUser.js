@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { desencrypt } = require('./../helpers');
 
 const authUser = async (req, res, next) => {
   try {
@@ -18,7 +19,12 @@ const authUser = async (req, res, next) => {
       error.httpStatus = 401;
       throw error;
     }
-    req.userAuth = tokenInfo;
+    const tokenInfoDescrypt = {
+      id: desencrypt(tokenInfo.id),
+      name: desencrypt(tokenInfo.name),
+    };
+    console.log(tokenInfoDescrypt);
+    req.userAuth = tokenInfoDescrypt;
     next();
   } catch (error) {
     next(error);
