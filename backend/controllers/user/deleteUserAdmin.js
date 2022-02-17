@@ -1,4 +1,3 @@
-const { nextDay } = require('date-fns');
 const getDB = require('./../../bdd/getBD');
 
 const deleteUserAdmin = async (req, res, next) => {
@@ -10,7 +9,7 @@ const deleteUserAdmin = async (req, res, next) => {
     //info usuarios
     const [userToDelete] = await connection.query(
       `
-    SELECT role, access, deleted FROM user_dev
+    SELECT role, access, deleted, name FROM user_dev
         WHERE id = ?
     `,
       [idUser]
@@ -22,16 +21,10 @@ const deleteUserAdmin = async (req, res, next) => {
         `,
       [id, name]
     );
-    console.log(userLogged[0].role);
     //comprobamos datos
     if (userLogged[0].role !== 'admin') {
       const error = new Error('No tienes autorización');
       error.httpStatus = 409;
-      throw error;
-    }
-    if (id === +idUser || userToDelete[0].role === 'admin') {
-      const error = new Error('Ponerse en contacto con programador');
-      error.httpStatus = 403;
       throw error;
     }
     if (userToDelete[0].deleted) {
@@ -39,11 +32,25 @@ const deleteUserAdmin = async (req, res, next) => {
       error.httpStatus = 403;
       throw error;
     }
+    if (id === +idUser || userToDelete[0].role === 'admin') {
+      const error = new Error('Ponerse en contacto con programador');
+      error.httpStatus = 403;
+      throw error;
+    }
     //cambiamos estado
+    await connection.query(
+      `
+    UPDATE user_dev
+    SET name = '[deleted]-${userToDelete[0].name}', active = 0, deleted = 1, security_question = "usuario eliminado"
+    , key_word = "usuario eliminado" 
+    WHERE id = ? AND name = ?
+    `,
+      [idUser, userToDelete[0].name]
+    );
 
     res.send({
       status: 'ok',
-      message: `Usuario tal eliminado `,
+      message: `Usuario ${userToDelete[0].name} eliminado `,
     });
   } catch (error) {
     next(error);

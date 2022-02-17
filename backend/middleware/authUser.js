@@ -23,7 +23,6 @@ const authUser = async (req, res, next) => {
       id: desencrypt(tokenInfo.id),
       name: desencrypt(tokenInfo.name),
     };
-    console.log(tokenInfoDescrypt);
     req.userAuth = tokenInfoDescrypt;
     next();
   } catch (error) {
